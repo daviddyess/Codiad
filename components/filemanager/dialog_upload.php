@@ -16,24 +16,24 @@ require_once('class.filemanager.php');
 checkSession();
 
 ?>
-<label>Upload Files</label>
+<label><?php i18n("Upload Files"); ?></label>
 
 <div id="upload-drop-zone">
     
     <span id="upload-wrapper">
     
         <input id="fileupload" type="file" name="upload[]" data-url="components/filemanager/controller.php?action=upload&path=<?php echo($_GET['path']); ?>" multiple>
-        <span id="upload-clicker">Drag Files or Click Here to Upload</span>
+        <span id="upload-clicker"><?php i18n("Drag Files or Click Here to Upload"); ?></span>
     
     </span>
 
     <div id="upload-progress"><div class="bar"></div></div>
     
-    <div id="upload-complete">Complete!</div>
+    <div id="upload-complete"><?php i18n("Complete!"); ?></div>
 
 </div>
 
-<button onclick="codiad.modal.unload();">Close Uploader</button>
+<button onclick="codiad.modal.unload();"><?php i18n("Close Uploader"); ?></button>
 
 <script>
 
@@ -51,7 +51,10 @@ $(function () {
         },
         done: function(e, data){
             $.each(data.result, function (index, file){
-                codiad.filemanager.createObject('<?php echo($_GET['path']); ?>','<?php echo($_GET['path']); ?>/'+file.name,'file');
+                var path = '<?php echo($_GET['path']); ?>';
+                codiad.filemanager.createObject(path, path + "/" + file.name,'file');
+                /* Notify listeners. */
+                amplify.publish('filemanager.onUpload', {file: file, path: path});
             });
             setTimeout(function(){
                 $('#upload-progress .bar').animate({'width':0},700);

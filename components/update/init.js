@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) Codiad & Kent Safranski (codiad.com), distributed
+ *  Copyright (c) Codiad & daeks (codiad.com), distributed
  *  as-is and without warranty under the MIT License. See
  *  [root]/license.txt for more. This information must remain intact.
  */ 
@@ -36,7 +36,7 @@
             $('#modal-content form')
                 .die('submit'); // Prevent form bubbling
                 codiad.modal.load(500, this.dialog + '?action=check');
-                $('#modal-content').html('<div id="modal-loading"></div><div align="center">Contacting GitHub...</div><br>');
+                $('#modal-content').html('<div id="modal-loading"></div><div align="center">' + i18n("Contacting GitHub...") + '</div><br>');
         }, 
         
         //////////////////////////////////////////////////////////////////

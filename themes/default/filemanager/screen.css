@@ -82,7 +82,7 @@
     display: none;
     top: 0;
     left: 0;
-    position: absolute;
+    position: fixed;
     width: 140px;
     padding: 0;
     background: #333;
@@ -91,6 +91,7 @@
     border: 3px solid rgba(255, 255, 255, 0.5);
     box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, .9);
     border-radius: 3px;
+    overflow-y: auto;
 }
 #context-menu a {
     display: block;
@@ -230,9 +231,6 @@
 }
 
 /* EXTENSIONS */
-#file-manager .ext-log {
-    background-image: url(images/file.png);
-}
 #file-manager .ext-htaccess {
     background-image: url(images/config.png);
 }
@@ -324,7 +322,7 @@
     background-image: url(images/code.png);
 }
 #file-manager .ext-log {
-    background-image: url(images/txt.png);
+    background-image: url(images/text-plain.png);
 }
 #file-manager .ext-m4p {
     background-image: url(images/music.png);

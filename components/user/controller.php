@@ -40,6 +40,9 @@
         else
             $User->lang = 'en';
 
+        // theme
+        $User->theme = $_POST['theme'];
+
         $User->Authenticate();
     }
 
@@ -124,7 +127,7 @@
     //////////////////////////////////////////////////////////////////
 
     if($_GET['action']=='project'){
-    	if(!isset($_POST['project'])){
+    	if(!isset($_GET['project'])){
     		die(formatJSEND("error","Missing project"));
     	}
     	

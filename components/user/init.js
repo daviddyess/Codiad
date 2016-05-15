@@ -26,10 +26,32 @@
             var _this = this;
             this.loginForm.on('submit', function(e) {
                 e.preventDefault();
+                // Save Language
+                localStorage.setItem('codiad.language', $("#language").val());
+                // Save Theme
+                localStorage.setItem('codiad.theme', $("#theme").val());
                 _this.authenticate();
             });
             
-            // Language Selector
+            // Get Theme
+            var theme = localStorage.getItem('codiad.theme');
+            $("#theme option").each(function()
+            {
+                if($(this).val() == theme) {
+                    $(this).attr("selected","selected");
+                }
+            });
+            
+            // Get Language
+            var language = localStorage.getItem('codiad.language');
+            $("#language option").each(function()
+            {
+                if($(this).val() == language) {
+                    $(this).attr("selected","selected");
+                }
+            });
+            
+            // More Selector
             $('.show-language-selector').click(function(){
                 $(this).hide();
                 $('.language-selector').animate({height:'toggle'}, "fast");
@@ -55,9 +77,18 @@
         //////////////////////////////////////////////////////////////////
 
         logout: function() {
-            $.get(this.controller + '?action=logout', function() {
-                window.location.reload();
-            });
+            var forcelogout = true;
+            if ($('#list-active-files li.changed').length > 0) {
+                forcelogout = confirm(i18n('You have unsaved files.'));
+            }
+            if(forcelogout) {
+                $('#list-active-files li.changed').each(function () { $(this).removeClass('changed')});
+                amplify.publish('user.logout', {});
+                codiad.settings.save();
+                $.get(this.controller + '?action=logout', function() {
+                    window.location.reload();
+                });
+            }
         },
 
         //////////////////////////////////////////////////////////////////
@@ -80,19 +111,31 @@
             $('#modal-content form')
                 .live('submit', function(e) {
                 e.preventDefault();
+                var pass = true;
                 var username = $('#modal-content form input[name="username"]')
                     .val();
                 var password1 = $('#modal-content form input[name="password1"]')
                     .val();
                 var password2 = $('#modal-content form input[name="password2"]')
                     .val();
+                
+                // Check matching passwords
                 if (password1 != password2) {
-                    codiad.message.error('Passwords Do Not Match');
-                } else {
+                    codiad.message.error(i18n('Passwords Do Not Match'));
+                    pass = false;
+                } 
+                
+                // Check no spaces in username
+                if (!/^[a-z0-9]+$/i.test(username) || username.length===0) {
+                    codiad.message.error(i18n('Username Must Be Alphanumeric String'));
+                    pass = false;
+                }
+                
+                if (pass) {
                     $.post(_this.controller + '?action=create', {'username' : username , 'password' : password1 }, function(data) {
                         var createResponse = codiad.jsend.parse(data);
                         if (createResponse != 'error') {
-                            codiad.message.success('User Account Created');
+                            codiad.message.success(i18n('User Account Created'))
                             _this.list();
                         }
                     });
@@ -115,7 +158,7 @@
                 $.get(_this.controller + '?action=delete&username=' + username, function(data) {
                     var deleteResponse = codiad.jsend.parse(data);
                     if (deleteResponse != 'error') {
-                        codiad.message.success('Account Deleted')
+                        codiad.message.success(i18n('Account Deleted'))
                         _this.list();
                     }
                 });
@@ -143,12 +186,12 @@
                 if(accessLevel==0){ projects = 0; }
                 // Check and make sure if access level not full that at least on project is selected
                 if (accessLevel==1 && !projects) {
-                    codiad.message.error('At Least One Project Must Be Selected');
+                    codiad.message.error(i18n('At Least One Project Must Be Selected'));
                 } else {
                     $.post(_this.controller + '?action=project_access&username=' + username,{projects: projects}, function(data) {
                         var projectsResponse = codiad.jsend.parse(data);
                         if (projectsResponse != 'error') {
-                            codiad.message.success('Account Modified');
+                            codiad.message.success(i18n('Account Modified'));
                         }
                     });
                 }
@@ -172,12 +215,12 @@
                 var password2 = $('#modal-content form input[name="password2"]')
                     .val();
                 if (password1 != password2) {
-                    codiad.message.error('Passwords Do Not Match');
+                    codiad.message.error(i18n('Passwords Do Not Match'));
                 } else {
                     $.post(_this.controller + '?action=password', {'username' : username , 'password' : password1 }, function(data) {
                         var passwordResponse = codiad.jsend.parse(data);
                         if (passwordResponse != 'error') {
-                            codiad.message.success('Password Changed');
+                            codiad.message.success(i18n('Password Changed'));
                             codiad.modal.unload();
                         }
                     });
